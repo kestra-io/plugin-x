@@ -1,0 +1,8 @@
+group: io.kestra.plugin.x
+name: "x"
+title: "X"
+description: "Plugin X for Kestra"
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"
