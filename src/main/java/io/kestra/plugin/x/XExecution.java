@@ -81,7 +81,8 @@ import java.util.Map;
                           - SUCCESS
                 """
         )
-    }
+    },
+    aliases = "io.kestra.plugin.notifications.x.XExecution"
 )
 public class XExecution extends XTemplate implements ExecutionInterface {
 
