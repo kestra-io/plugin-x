@@ -36,9 +36,7 @@
 <p align="center" style="color:grey;"><i>Get started with Kestra in 4 minutes.</i></p>
 
 
-# Kestra Plugin Template
-
-> A template for creating Kestra plugins
+# Kestra X Plugin
 
 ![Kestra orchestrator](https://kestra.io/video.gif)
 
