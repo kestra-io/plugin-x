@@ -19,8 +19,8 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Send an X (Twitter) post with execution information.",
-    description = "Send execution details via X (Twitter) including execution link, ID, namespace, flow name, start date, duration, and status."
+    title = "Post execution summary to X",
+    description = "Renders the bundled x.peb template with execution details (id, namespace, link, status, timings) plus custom fields/message, then sends it to X via bearer token or OAuth 1.0a with a 280-character cap."
 )
 @Plugin(
     examples = {
@@ -36,7 +36,7 @@ import java.util.Map;
                     type: io.kestra.plugin.x.XExecution
                     bearerToken: "{{ secret('X_BEARER_TOKEN') }}"
                     executionId: "{{ trigger.executionId }}"
-                    customMessage: "Production workflow failed - immediate attention required!"
+                    customMessage: "Production workflow failed - immediate attention required!"  # Keep total text <= 280 chars
                     customFields:
                       Environment: "Production"
                       Team: "DevOps"
@@ -70,7 +70,11 @@ import java.util.Map;
                     accessToken: "{{ secret('X_ACCESS_TOKEN') }}"
                     accessSecret: "{{ secret('X_ACCESS_SECRET') }}"
                     executionId: "{{ trigger.executionId }}"
-                    customMessage: "Deployment completed successfully!"
+                    customMessage: "Deployment completed successfully!"  # Keep total text <= 280 chars
+                    options:
+                      readTimeout: PT5S
+                      headers:
+                        X-Datacenter: "eu-west-1"
 
                 triggers:
                   - id: successful_deployments
@@ -86,14 +90,14 @@ import java.util.Map;
 )
 public class XExecution extends XTemplate implements ExecutionInterface {
 
-    @Schema(title = "The execution ID to use", description = "Default is the current execution, change it to {{ trigger.executionId }} if you use this task with a Flow trigger to use the original execution.")
+    @Schema(title = "Execution ID", description = "Execution to include in the template; defaults to the current execution and should be set to {{ trigger.executionId }} when called from a Flow trigger")
     @Builder.Default
     private final Property<String> executionId = Property.ofExpression("{{ execution.id }}");
 
-    @Schema(title = "Custom fields to be added in the notification")
+    @Schema(title = "Custom fields", description = "Key-value pairs appended to the rendered template output")
     private Property<Map<String, Object>> customFields;
 
-    @Schema(title = "Custom message to be added in the notification")
+    @Schema(title = "Custom message", description = "Optional extra text appended to the template output")
     private Property<String> customMessage;
 
     @Override

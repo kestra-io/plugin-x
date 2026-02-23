@@ -32,31 +32,31 @@ public abstract class XTemplate extends AbstractXConnection {
     private static final String OAUTH_1_ALGORITHM = "HmacSHA1";
     private static final int MAX_POST_LENGTH = 280;
 
-    @Schema(title = "Bearer Token", description = "X API Bearer Token for authentication. If provided, OAuth 1.0a credentials are not required.")
+    @Schema(title = "Bearer token", description = "X API bearer token for app-only authentication; overrides OAuth 1.0a credentials when set.")
     protected Property<String> bearerToken;
 
-    @Schema(title = "OAuth Consumer Key", description = "X API OAuth 1.0a Consumer Key (API Key). Required if bearerToken is not provided.")
+    @Schema(title = "OAuth consumer key", description = "OAuth 1.0a consumer key (API key) used when no bearer token is provided.")
     protected Property<String> consumerKey;
 
-    @Schema(title = "OAuth Consumer Secret", description = "X API OAuth 1.0a Consumer Secret (API Secret). Required if bearerToken is not provided.")
+    @Schema(title = "OAuth consumer secret", description = "OAuth 1.0a consumer secret (API secret) required when bearer authentication is not used.")
     protected Property<String> consumerSecret;
 
-    @Schema(title = "OAuth Access Token", description = "X API OAuth 1.0a Access Token. Required if bearerToken is not provided.")
+    @Schema(title = "OAuth access token", description = "OAuth 1.0a access token required when bearer authentication is not used.")
     protected Property<String> accessToken;
 
-    @Schema(title = "OAuth Access Secret", description = "X API OAuth 1.0a Access Token Secret. Required if bearerToken is not provided.")
+    @Schema(title = "OAuth access secret", description = "OAuth 1.0a access token secret required when bearer authentication is not used.")
     protected Property<String> accessSecret;
 
-    @Schema(title = "Template to use", hidden = true)
+    @Schema(title = "Template URI", description = "Classpath Pebble template used to render the post body", hidden = true)
     protected Property<String> templateUri;
 
-    @Schema(title = "Map of variables to use for the message template")
+    @Schema(title = "Template variables", description = "Key-value map rendered and injected into the template before sending")
     protected Property<Map<String, Object>> templateRenderMap;
 
-    @Schema(title = "Post text body", description = "Direct post text (bypasses template)")
+    @Schema(title = "Post text body", description = "Direct post text that bypasses the template; must fit within 280 characters")
     protected Property<String> textBody;
 
-    @Schema(title = "Override URL for testing", description = "Optional URL to override the default X API endpoint (for testing purposes)")
+    @Schema(title = "Override URL for testing", description = "Optional X API endpoint override; defaults to https://api.x.com/2/tweets")
     @Builder.Default
     protected Property<String> url = Property.ofValue("https://api.x.com/2/tweets");
 

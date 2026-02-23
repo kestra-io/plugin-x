@@ -68,26 +68,26 @@ public abstract class AbstractXConnection extends Task implements RunnableTask<V
     @Getter
     @Builder
     public static class RequestOptions {
-        @Schema(title = "The time allowed to establish a connection to the server before failing.")
+        @Schema(title = "Connection timeout", description = "Time allowed to establish a server connection before failing")
         private final Property<Duration> connectTimeout;
 
-        @Schema(title = "The maximum time allowed for reading data from the server before failing.")
+        @Schema(title = "Read timeout", description = "Max time allowed for reading data from the server before failing; defaults to 10s")
         @Builder.Default
         private final Property<Duration> readTimeout = Property.ofValue(Duration.ofSeconds(10));
 
-        @Schema(title = "The time allowed for a read connection to remain idle before closing it.")
+        @Schema(title = "Read idle timeout", description = "How long a read connection may stay idle before closing; defaults to 5 minutes")
         @Builder.Default
         private final Property<Duration> readIdleTimeout = Property.ofValue(Duration.of(5, ChronoUnit.MINUTES));
 
-        @Schema(title = "The time an idle connection can remain in the client's connection pool before being closed.")
+        @Schema(title = "Connection pool idle timeout", description = "How long an idle connection stays in the pool before closure; defaults to 0s")
         @Builder.Default
         private final Property<Duration> connectionPoolIdleTimeout = Property.ofValue(Duration.ofSeconds(0));
 
-        @Schema(title = "The maximum content length of the response.")
+        @Schema(title = "Max content length", description = "Maximum response size in bytes; defaults to 10 MB")
         @Builder.Default
         private final Property<Integer> maxContentLength = Property.ofValue(1024 * 1024 * 10);
 
-        @Schema(title = "The default charset for the request.")
+        @Schema(title = "Default charset", description = "Charset used for requests when none is specified; defaults to UTF-8")
         @Builder.Default
         private final Property<Charset> defaultCharset = Property.ofValue(StandardCharsets.UTF_8);
 
