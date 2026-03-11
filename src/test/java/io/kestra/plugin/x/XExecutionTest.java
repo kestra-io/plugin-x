@@ -1,15 +1,17 @@
 package io.kestra.plugin.x;
 
-import io.kestra.core.junit.annotations.KestraTest;
-import io.kestra.core.repositories.LocalFlowRepositoryLoader;
-import io.kestra.core.runners.TestRunner;
-import jakarta.inject.Inject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import io.kestra.core.junit.annotations.KestraTest;
+import io.kestra.core.repositories.LocalFlowRepositoryLoader;
+import io.kestra.core.runners.TestRunner;
+
+import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -35,7 +37,8 @@ public class XExecutionTest extends AbstractXTest {
     void flow() throws Exception {
         var execution = runAndCaptureExecution(
             "main-flow-that-fails",
-            "x");
+            "x"
+        );
 
         String receivedData = waitForWebhookData(() -> FakeWebhookController.data, 5000);
 
@@ -52,7 +55,8 @@ public class XExecutionTest extends AbstractXTest {
     void flow_successfulFlowShowLastTaskId() throws Exception {
         var execution = runAndCaptureExecution(
             "main-flow-that-succeeds",
-            "x-successful");
+            "x-successful"
+        );
 
         String receivedData = waitForWebhookData(() -> FakeWebhookController.data, 5000);
 

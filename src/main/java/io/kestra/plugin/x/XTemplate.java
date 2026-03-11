@@ -1,19 +1,5 @@
 package io.kestra.plugin.x;
 
-import io.kestra.core.http.HttpRequest;
-import io.kestra.core.http.HttpResponse;
-import io.kestra.core.http.client.HttpClient;
-import io.kestra.core.models.property.Property;
-import io.kestra.core.models.tasks.VoidOutput;
-import io.kestra.core.runners.RunContext;
-import io.kestra.core.serializers.JacksonMapper;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.apache.commons.io.IOUtils;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -22,8 +8,25 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.io.IOUtils;
+
+import io.kestra.core.http.HttpRequest;
+import io.kestra.core.http.HttpResponse;
+import io.kestra.core.http.client.HttpClient;
+import io.kestra.core.models.property.Property;
+import io.kestra.core.models.tasks.VoidOutput;
+import io.kestra.core.runners.RunContext;
+import io.kestra.core.serializers.JacksonMapper;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 @SuperBuilder
-@ToString(exclude = {"bearerToken", "consumerKey", "consumerSecret", "accessToken", "accessSecret"})
+@ToString(exclude = { "bearerToken", "consumerKey", "consumerSecret", "accessToken", "accessSecret" })
 @EqualsAndHashCode
 @Getter
 @NoArgsConstructor
@@ -81,15 +84,19 @@ public abstract class XTemplate extends AbstractXConnection {
                 rConsumerKeyValue,
                 rConsumerSecretValue,
                 rAccessTokenValue,
-                rAccessSecretValue);
+                rAccessSecretValue
+            );
         }
 
         String rPostText = getPostText(runContext);
 
         if (rPostText.length() > MAX_POST_LENGTH) {
             throw new IllegalArgumentException(
-                String.format("Tweet message exceeds maximum length of %d characters. Current length: %d",
-                    MAX_POST_LENGTH, rPostText.length()));
+                String.format(
+                    "Tweet message exceeds maximum length of %d characters. Current length: %d",
+                    MAX_POST_LENGTH, rPostText.length()
+                )
+            );
         }
 
         Map<String, Object> postPayload = new HashMap<>();
@@ -133,7 +140,8 @@ public abstract class XTemplate extends AbstractXConnection {
             }
             String template = IOUtils.toString(
                 resourceStream,
-                StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8
+            );
 
             Map<String, Object> rTemplateVars = runContext.render(templateRenderMap).asMap(String.class, Object.class);
 
@@ -144,7 +152,7 @@ public abstract class XTemplate extends AbstractXConnection {
     }
 
     private String buildOAuth1Header(RunContext runContext, String url,
-                                     String consumerKey, String consumerSecret, String token, String secret) {
+        String consumerKey, String consumerSecret, String token, String secret) {
         try {
             String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
             String nonce = UUID.randomUUID().toString().replace("-", "");
@@ -170,7 +178,8 @@ public abstract class XTemplate extends AbstractXConnection {
                 nonce,
                 URLEncoder.encode(signature, StandardCharsets.UTF_8),
                 timestamp,
-                token);
+                token
+            );
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate OAuth 1.0a header", e);
         }
@@ -179,8 +188,10 @@ public abstract class XTemplate extends AbstractXConnection {
     private String createSignatureBaseString(String url, Map<String, String> params) {
         String sortedParams = params.entrySet().stream()
             .sorted(Map.Entry.comparingByKey())
-            .map(entry -> URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" +
-                URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
+            .map(
+                entry -> URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" +
+                    URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)
+            )
             .collect(Collectors.joining("&"));
 
         return "POST" + "&" +

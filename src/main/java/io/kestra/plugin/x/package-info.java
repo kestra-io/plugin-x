@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    description = "This sub-group of plugins contains tasks for X (formerly Twitter) notifications.",categories = {
+    description = "This sub-group of plugins contains tasks for X (formerly Twitter) notifications.", categories = {
         PluginSubGroup.PluginCategory.BUSINESS
     }
 )
