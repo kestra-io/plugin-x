@@ -24,6 +24,7 @@ import io.kestra.core.serializers.JacksonMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString(exclude = { "bearerToken", "consumerKey", "consumerSecret", "accessToken", "accessSecret" })
@@ -36,31 +37,40 @@ public abstract class XTemplate extends AbstractXConnection {
     private static final int MAX_POST_LENGTH = 280;
 
     @Schema(title = "Bearer token", description = "X API bearer token for app-only authentication; overrides OAuth 1.0a credentials when set.")
+    @PluginProperty(group = "connection")
     protected Property<String> bearerToken;
 
     @Schema(title = "OAuth consumer key", description = "OAuth 1.0a consumer key (API key) used when no bearer token is provided.")
+    @PluginProperty(group = "connection")
     protected Property<String> consumerKey;
 
     @Schema(title = "OAuth consumer secret", description = "OAuth 1.0a consumer secret (API secret) required when bearer authentication is not used.")
+    @PluginProperty(group = "connection")
     protected Property<String> consumerSecret;
 
     @Schema(title = "OAuth access token", description = "OAuth 1.0a access token required when bearer authentication is not used.")
+    @PluginProperty(group = "connection")
     protected Property<String> accessToken;
 
     @Schema(title = "OAuth access secret", description = "OAuth 1.0a access token secret required when bearer authentication is not used.")
+    @PluginProperty(group = "connection")
     protected Property<String> accessSecret;
 
     @Schema(title = "Template URI", description = "Classpath Pebble template used to render the post body", hidden = true)
+    @PluginProperty(group = "advanced")
     protected Property<String> templateUri;
 
     @Schema(title = "Template variables", description = "Key-value map rendered and injected into the template before sending")
+    @PluginProperty(group = "advanced")
     protected Property<Map<String, Object>> templateRenderMap;
 
     @Schema(title = "Post text body", description = "Direct post text that bypasses the template; must fit within 280 characters")
+    @PluginProperty(group = "advanced")
     protected Property<String> textBody;
 
     @Schema(title = "Override URL for testing", description = "Optional X API endpoint override; defaults to https://api.x.com/2/tweets")
     @Builder.Default
+    @PluginProperty(group = "connection")
     protected Property<String> url = Property.ofValue("https://api.x.com/2/tweets");
 
     @Override
