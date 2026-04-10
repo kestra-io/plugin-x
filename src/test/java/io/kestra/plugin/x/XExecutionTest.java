@@ -1,23 +1,23 @@
 package io.kestra.plugin.x;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.repositories.LocalFlowRepositoryLoader;
 import io.kestra.core.runners.TestRunner;
-
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @KestraTest
 public class XExecutionTest extends AbstractXTest {
 
@@ -27,14 +27,14 @@ public class XExecutionTest extends AbstractXTest {
     @Inject
     protected LocalFlowRepositoryLoader repositoryLoader;
 
-    @BeforeEach
+    @BeforeAll
     protected void init() throws IOException, URISyntaxException {
         repositoryLoader
             .load(Objects.requireNonNull(XExecutionTest.class.getClassLoader().getResource("flows")));
         this.runner.run();
     }
 
-    @AfterEach
+    @AfterAll
     protected void destroy() throws Exception {
         this.runner.close();
     }
@@ -46,7 +46,12 @@ public class XExecutionTest extends AbstractXTest {
             "x"
         );
 
-        String receivedData = waitForWebhookData(() -> FakeWebhookController.data, 5000);
+        String receivedData = waitForWebhookData(
+            () -> FakeWebhookController.data != null && FakeWebhookController.data.contains(execution.getId())
+                ? FakeWebhookController.data
+                : null,
+            5000
+        );
 
         assertThat(receivedData, containsString(execution.getId()));
         assertThat(receivedData, containsString("https://mysuperhost.com/kestra/ui"));
@@ -64,7 +69,12 @@ public class XExecutionTest extends AbstractXTest {
             "x-successful"
         );
 
-        String receivedData = waitForWebhookData(() -> FakeWebhookController.data, 5000);
+        String receivedData = waitForWebhookData(
+            () -> FakeWebhookController.data != null && FakeWebhookController.data.contains(execution.getId())
+                ? FakeWebhookController.data
+                : null,
+            5000
+        );
 
         assertThat(receivedData, containsString(execution.getId()));
         assertThat(receivedData, containsString("https://mysuperhost.com/kestra/ui"));
