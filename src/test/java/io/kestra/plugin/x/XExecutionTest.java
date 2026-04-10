@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,11 @@ public class XExecutionTest extends AbstractXTest {
         repositoryLoader
             .load(Objects.requireNonNull(XExecutionTest.class.getClassLoader().getResource("flows")));
         this.runner.run();
+    }
+
+    @AfterEach
+    protected void destroy() throws Exception {
+        this.runner.close();
     }
 
     @Test
