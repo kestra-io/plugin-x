@@ -37,23 +37,23 @@ public abstract class XTemplate extends AbstractXConnection {
     private static final int MAX_POST_LENGTH = 280;
 
     @Schema(title = "Bearer token", description = "X API bearer token for app-only authentication; overrides OAuth 1.0a credentials when set.")
-    @PluginProperty(group = "connection")
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> bearerToken;
 
     @Schema(title = "OAuth consumer key", description = "OAuth 1.0a consumer key (API key) used when no bearer token is provided.")
-    @PluginProperty(group = "connection")
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> consumerKey;
 
     @Schema(title = "OAuth consumer secret", description = "OAuth 1.0a consumer secret (API secret) required when bearer authentication is not used.")
-    @PluginProperty(group = "connection")
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> consumerSecret;
 
     @Schema(title = "OAuth access token", description = "OAuth 1.0a access token required when bearer authentication is not used.")
-    @PluginProperty(group = "connection")
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> accessToken;
 
     @Schema(title = "OAuth access secret", description = "OAuth 1.0a access token secret required when bearer authentication is not used.")
-    @PluginProperty(group = "connection")
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> accessSecret;
 
     @Schema(title = "Template URI", description = "Classpath Pebble template used to render the post body", hidden = true)
