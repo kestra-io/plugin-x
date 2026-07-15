@@ -1,24 +1,23 @@
 package io.kestra.plugin.x;
 
-import io.kestra.core.junit.annotations.KestraTest;
-import io.kestra.core.models.executions.Execution;
-import io.kestra.core.queues.DispatchQueueInterface;
-import io.kestra.core.runners.TestRunnerUtils;
-import io.kestra.core.utils.Await;
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.runtime.server.EmbeddedServer;
-import jakarta.inject.Inject;
+import java.time.Duration;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 
-import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
+import io.kestra.core.junit.annotations.KestraTest;
+import io.kestra.core.models.executions.Execution;
+import io.kestra.core.queues.DispatchQueueInterface;
+import io.kestra.core.runners.TestRunnerUtils;
+import io.kestra.core.utils.Await;
+
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.runtime.server.EmbeddedServer;
+import jakarta.inject.Inject;
 
 import static io.kestra.core.tenant.TenantService.MAIN_TENANT;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -80,29 +79,16 @@ public class AbstractXTest {
     }
 
     protected Execution runAndCaptureExecution(String triggeringFlowId, String notificationFlowId) throws Exception {
-        CountDownLatch queueCount = new CountDownLatch(1);
-        AtomicReference<Execution> last = new AtomicReference<>();
+        Execution execution = runnerUtils.runOne(MAIN_TENANT, "io.kestra.tests", triggeringFlowId);
 
-        executionQueue.addListener(execution ->
-        {
-            if (execution.getFlowId().equals(notificationFlowId)) {
-                last.set(execution);
-                queueCount.countDown();
-            }
-        });
-
-        Execution execution;
-
-        execution = runnerUtils.runOne(
+        Execution triggeredExecution = runnerUtils.awaitFlowExecution(
+            e -> e.getTrigger() != null && execution.getId().equals(e.getTrigger().getVariables().get("executionId")),
             MAIN_TENANT,
             "io.kestra.tests",
-            triggeringFlowId
+            notificationFlowId,
+            java.time.Duration.ofSeconds(30)
         );
 
-        boolean await = queueCount.await(20, TimeUnit.SECONDS);
-        assertThat(await, is(true));
-
-        Execution triggeredExecution = last.get();
         assertThat(triggeredExecution, notNullValue());
         assertThat(triggeredExecution.getTrigger().getVariables().get("executionId"), is(execution.getId()));
 
