@@ -4,6 +4,7 @@ import java.util.Map;
 
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
+import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.VoidOutput;
 import io.kestra.core.plugins.notifications.ExecutionInterface;
@@ -13,7 +14,6 @@ import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -74,7 +74,7 @@ import io.kestra.core.models.annotations.PluginProperty;
                     executionId: "{{ trigger.executionId }}"
                     customMessage: "Deployment completed successfully!"  # Keep total text <= 280 chars
                     options:
-                      readTimeout: PT5S
+                      readIdleTimeout: PT5S
                       headers:
                         X-Datacenter: "eu-west-1"
 
